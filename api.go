@@ -25,6 +25,8 @@ func formatMessage(msg interface{}) string {
 	switch m := msg.(type) {
 	case string:
 		return m
+	case message.CQCoder:
+		return m.CQCode()
 	case fmt.Stringer:
 		return m.String()
 	default:
@@ -371,6 +373,15 @@ func (ctx *Ctx) OCRImage(file string) gjson.Result {
 func (ctx *Ctx) SendGroupForwardMessage(groupID int64, message message.Message) gjson.Result {
 	return ctx.CallAction("send_group_forward_msg", Params{
 		"group_id": groupID,
+		"messages": message,
+	}).Data
+}
+
+// SendPrivateForwardMessage 发送合并转发(私聊)
+// https://github.com/Mrs4s/go-cqhttp/blob/master/docs/cqhttp.md#%E5%9B%BE%E7%89%87ocr
+func (ctx *Ctx) SendPrivateForwardMessage(userID int64, message message.Message) gjson.Result {
+	return ctx.CallAction("send_private_forward_msg", Params{
+		"user_id":  userID,
 		"messages": message,
 	}).Data
 }
